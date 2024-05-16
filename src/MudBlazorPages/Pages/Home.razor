@@ -3,39 +3,45 @@
 <PageTitle>Graduated Income Boost Calculator</PageTitle>
 
 <MudStack Spacing="3">
-    <MudText>My Annual Cash Flow</MudText>
-    <MudNumericField @bind-Value="_annualCashFlow" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Immediate="true" HelperText="Enter your annual cash flow" Variant="Variant.Outlined" />
+    <MudText Typo="Typo.h6">My Annual @Benefit</MudText>
+    <MudNumericField @bind-Value="_annualCashFlow" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Immediate="true" HelperText="@($"Enter your annual {Benefit?.ToLower()}")" Variant="Variant.Outlined" />
     <MudStack Row="true">
         <MudStack>
-            <MudText>My GIB Adustment</MudText>
-            <MudText>(50% of My Annual Cash Flow)</MudText>
+            <MudText Style="font-weight:bold;">My GIB Adustment</MudText>
+            <MudText>(50% of My Annual @Benefit)</MudText>
         </MudStack>
         <MudSpacer/>
-        <MudText>@GraduatedIncomeBoostAdjustment(_annualCashFlow).ToString("N0") USD</MudText>
+        <MudText Style="font-weight:bold;">@GraduatedIncomeBoostAdjustment(_annualCashFlow).ToString("N0") USD</MudText>
     </MudStack>
     <MudStack Row="true">
         <MudStack>
-            <MudText>My GIB Payment</MudText>
+            <MudText Style="font-weight:bold;">My GIB Payment</MudText>
             <MudText>($@GuaranteedBenefit.ToString("N0") - My GIB Adjustment)</MudText>
         </MudStack>
         <MudSpacer />
-        <MudText>@GuaranteedIncomeBoostBenefit(_annualCashFlow).ToString("N0") USD</MudText>
+        <MudText Style="font-weight:bold;">@GuaranteedIncomeBoostBenefit(_annualCashFlow).ToString("N0") USD</MudText>
     </MudStack>
+    <MudDivider/>
     <MudStack Row="true">
         <MudStack>
-            <MudText>My Total Cash Flow</MudText>
-            <MudText>(My Annual Cash Flow + My GIB Payment)</MudText>
+            <MudText Style="font-weight:bold;">My Total @Benefit</MudText>
+            <MudText>(My Annual @Benefit + My GIB Payment)</MudText>
         </MudStack>
         <MudSpacer />
-        <MudText>@((_annualCashFlow + GuaranteedIncomeBoostBenefit(_annualCashFlow)).ToString("N0")) USD</MudText>
+        <MudText Style="font-weight:bold;">@((_annualCashFlow + GuaranteedIncomeBoostBenefit(_annualCashFlow)).ToString("N0")) USD</MudText>
     </MudStack>
 </MudStack>
 
 @code{
     private const int GuaranteedBenefit = 18000;
-    private const int MaxCompensation = 36000;
+    private const int MaxCompensation = GuaranteedBenefit * 2;
 
     private int _annualCashFlow;
+
+    [SupplyParameterFromQuery(Name = "benefit")]
+    public string? CustomBenefit { get; set; }
+
+    private string Benefit => CustomBenefit ?? "Cash Flow";
 
     private static int GuaranteedIncomeBoostBenefit(int currentCompensation)
         => currentCompensation > MaxCompensation ? 0 : GuaranteedBenefit + GraduatedIncomeBoostAdjustment(currentCompensation);
