@@ -1,14 +1,60 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Graduated Income Boost Calculator</PageTitle>
 
+<MudStack Row="true">
+    <MudSpacer />
+    <MudStack Spacing="3" Style="max-width:300;">
+        <MudText Typo="Typo.h6">My Annual @Benefit</MudText>
+        <MudNumericField @bind-Value="_annualCashFlow" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Immediate="true" HelperText="@($"Enter your annual {Benefit?.ToLower()}")" Variant="Variant.Outlined" />
+        <MudStack Row="true">
+            <MudStack>
+                <MudText Style="font-weight:bold;">My GIB Adustment</MudText>
+                <MudText>(50% of My Annual @Benefit)</MudText>
+            </MudStack>
+            <MudSpacer />
+            <MudText Style="font-weight:bold;">@GraduatedIncomeBoostAdjustment(_annualCashFlow).ToString("N0") USD</MudText>
+        </MudStack>
+        <MudStack Row="true">
+            <MudStack>
+                <MudText Style="font-weight:bold;">My GIB Payment</MudText>
+                <MudText>($@GuaranteedBenefit.ToString("N0") - My GIB Adjustment)</MudText>
+            </MudStack>
+            <MudSpacer />
+            <MudText Style="font-weight:bold;">@GuaranteedIncomeBoostBenefit(_annualCashFlow).ToString("N0") USD</MudText>
+        </MudStack>
+        <MudDivider />
+        <MudStack Row="true">
+            <MudStack>
+                <MudText Style="font-weight:bold;">My Total @Benefit</MudText>
+                <MudText>(My Annual @Benefit + My GIB Payment)</MudText>
+            </MudStack>
+            <MudSpacer />
+            <MudText Style="font-weight:bold;">@((_annualCashFlow + GuaranteedIncomeBoostBenefit(_annualCashFlow)).ToString("N0")) USD</MudText>
+        </MudStack>
+        <br/>
+        <MudStack Row="true">
+            <MudSpacer/>
+            <MudText>Created by <MudLink Href="https://thirdoption.party" Target="_blank">Third Party</MudLink></MudText>
+        </MudStack>
+    </MudStack>
+    <MudSpacer />
+</MudStack>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 8 Template!</MudText>
+@code{
+    private const int GuaranteedBenefit = 18000;
+    private const int MaxCompensation = GuaranteedBenefit * 2;
 
-<MudAlert Severity="Severity.Normal">
-    You can find documentation and examples on our website here:
-    <MudLink Href="https://mudblazor.com" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        <b>www.mudblazor.com</b>
-    </MudLink>
-</MudAlert>
+    private int _annualCashFlow;
+
+    [SupplyParameterFromQuery(Name = "benefit")]
+    public string? CustomBenefit { get; set; }
+
+    private string Benefit => CustomBenefit ?? "Cash Flow";
+
+    private static int GuaranteedIncomeBoostBenefit(int currentCompensation)
+        => currentCompensation > MaxCompensation ? 0 : GuaranteedBenefit + GraduatedIncomeBoostAdjustment(currentCompensation);
+
+    private static int GraduatedIncomeBoostAdjustment(int currentCompensation)
+        => currentCompensation < MaxCompensation ? -1 * currentCompensation / 2 : 0;
+}
