@@ -2,13 +2,27 @@
 
 <PageTitle>Graduated Income Boost Calculator</PageTitle>
 
+<MudStack Spacing="3">
+    <MudText>My Annual Cash Flow</MudText>
+    <MudTextField Placeholder="Enter your annual cash flow" Value="@_annualCashFlow" AutoFocus="true"  />
+    <MudNumericField @bind-Value="_annualCashFlow" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Immediate="true" HelperText="Enter your annual cash flow" Variant="Variant.Outlined" />
+    <MudStack Row="true">
+        <MudStack>
+            <MudText>My GIB Adustment</MudText>
+            <MudText>50% of My Annual Cash Flow</MudText>
+        </MudStack>
+        <MudSpacer/>
+        <MudText>0 USD</MudText>
+    </MudStack>
+</MudStack>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 8 Template!</MudText>
+@code{
+    private const int GuaranteedBenefit = 18000;
+    private const int MaxCompensation = 36000;
 
-<MudAlert Severity="Severity.Normal">
-    You can find documentation and examples on our website here:
-    <MudLink Href="https://mudblazor.com" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        <b>www.mudblazor.com</b>
-    </MudLink>
-</MudAlert>
+    private int _annualCashFlow;
+
+    //private static int GuaranteedIncomeBoostBenefit(int currentCompensation)    => currentCompensation > MaxCompensation ? 0 : 
+    private static int GraduatedIncomeBoostAdjustment(int currentCompensation)
+        => currentCompensation < MaxCompensation ? -1 * currentCompensation / 2 : 0;
+}
