@@ -4,15 +4,30 @@
 
 <MudStack Spacing="3">
     <MudText>My Annual Cash Flow</MudText>
-    <MudTextField Placeholder="Enter your annual cash flow" Value="@_annualCashFlow" AutoFocus="true"  />
     <MudNumericField @bind-Value="_annualCashFlow" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Immediate="true" HelperText="Enter your annual cash flow" Variant="Variant.Outlined" />
     <MudStack Row="true">
         <MudStack>
             <MudText>My GIB Adustment</MudText>
-            <MudText>50% of My Annual Cash Flow</MudText>
+            <MudText>(50% of My Annual Cash Flow)</MudText>
         </MudStack>
         <MudSpacer/>
-        <MudText>0 USD</MudText>
+        <MudText>@GraduatedIncomeBoostAdjustment(_annualCashFlow).ToString("N0") USD</MudText>
+    </MudStack>
+    <MudStack Row="true">
+        <MudStack>
+            <MudText>My GIB Payment</MudText>
+            <MudText>($@GuaranteedBenefit.ToString("N0") - My GIB Adjustment)</MudText>
+        </MudStack>
+        <MudSpacer />
+        <MudText>@GuaranteedIncomeBoostBenefit(_annualCashFlow).ToString("N0") USD</MudText>
+    </MudStack>
+    <MudStack Row="true">
+        <MudStack>
+            <MudText>My Total Cash Flow</MudText>
+            <MudText>(My Annual Cash Flow + My GIB Payment)</MudText>
+        </MudStack>
+        <MudSpacer />
+        <MudText>@((_annualCashFlow + GuaranteedIncomeBoostBenefit(_annualCashFlow)).ToString("N0")) USD</MudText>
     </MudStack>
 </MudStack>
 
@@ -22,7 +37,9 @@
 
     private int _annualCashFlow;
 
-    //private static int GuaranteedIncomeBoostBenefit(int currentCompensation)    => currentCompensation > MaxCompensation ? 0 : 
+    private static int GuaranteedIncomeBoostBenefit(int currentCompensation)
+        => currentCompensation > MaxCompensation ? 0 : GuaranteedBenefit + GraduatedIncomeBoostAdjustment(currentCompensation);
+
     private static int GraduatedIncomeBoostAdjustment(int currentCompensation)
         => currentCompensation < MaxCompensation ? -1 * currentCompensation / 2 : 0;
 }
